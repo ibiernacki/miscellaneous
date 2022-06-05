@@ -3,6 +3,8 @@ if (!$IsWindows) {
     exit;
 }
 
+
+
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     
@@ -16,13 +18,18 @@ if(! (where.exe /Q choco)) {
     exit;
 }
 
+
 $profilePwshPath = "profile/pwsh/profile.ps1"
-$profileUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/$profilePwshPath"
+$repoUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main"
+$defaultProfilePwshUrl = "$repoUrl/profile/pwsh/Microsoft.PowerShell_profile.ps1"
+$profileUrl = "$repoUrl/$profilePwshPath"
+$defaultProfile
 $profilePath = "$HOME/.profile"
 $profilePwshPath = "$profilePath/$profilePwshPath"
 
-
 New-Item -ItemType Directory -Force -Path "$profilePwshPath"
 Invoke-RestMethod  $profileUrl -OutFile "$profilePwshPath"
+$defaultProfileContent = Invoke-RestMethod $defaultProfilePwshUrl
 
+$PROFILE >> $defaultProfileContent
 & $profilePwshPath
