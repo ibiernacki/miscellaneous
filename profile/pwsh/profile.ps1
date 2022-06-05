@@ -1,7 +1,5 @@
 $profileName = "ibiernacki"
 $profileGithubUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/"
-
-
 $profilePath = "$HOME/.profile"
 $workspace = "shared" #available options: "dev", "shared", "qa"
 $code = "$HOME/code"
