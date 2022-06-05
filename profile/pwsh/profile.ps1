@@ -1,28 +1,36 @@
+$profileName = "ibiernacki"
+$profileGithubUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/"
+
 $workspace = "shared" #available options: "dev", "shared", "qa"
-
 $code = "$HOME/code"
-$profile = "$HOME/.profile"
-
+$ohMyPoshTheme = "default"
+$ohmyposhConfigPath = "$HOME/.profile/profile/oh-my-posh/$ohMyPoshTheme.json"
 
 
 #set up global variables (available in whole system)
 $globalEnvVariables = @{
     dev       = "$HOME/dev" #path to code repos
     workspace = "$workspace";
-} #usage: Write-Host $env:ohMyPoshTheme
+} #usage: Write-Host $env:workspace
+
 
 if ($IsWindows) {
     $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
     $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     
     if (!$isAdmin) {
-        Write-Error "console not in admin"
-        exit;
+        Write-Warning "console not in admin"
     }
 }
 
-if (![Environment]::GetEnvironmentVariable("provisioned", 'Machine')) {
+#todo: this section should be be stateless
+if (!([Environment]::GetEnvironmentVariable("provisioned", 'Machine') -eq "$profileName")) {
     
+    if(!$isAdmin) {
+        Write-Warning "console not in admin (launch in admin to provision)"
+        exit;
+    }
+
     Write-Warning "Provisioning..."
     Install-Module -Name Terminal-Icons -Repository PSGallery -Force
     Install-Module PSReadLine -AllowPrerelease -Force -AcceptLicense
@@ -31,20 +39,17 @@ if (![Environment]::GetEnvironmentVariable("provisioned", 'Machine')) {
     $globalEnvVariables.Keys | ForEach-Object {
         $key = $_ 
         $globalEnvVariables.Values | Select-Object -First 1 -Skip $index | ForEach-Object {
-            if (![System.Environment]::GetEnvironmentVariable($key, 'Machine')) {
                 [Environment]::SetEnvironmentVariable($key, $_ , 'Machine')
             }
         }
         $index ++
     }
-    
-    New-Item -ItemType Directory -Force -Path $profile
-    $ohMyPoshProfileUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/oh-my-posh-theme.json"
-    irm  $ohMyPoshProfileUrl -OutFile "$profile/$ohMyPoshTheme.json"
-
+    New-Item -ItemType Directory -Force -Path "$HOME/.profile/profile/oh-my-posh"
+    $profileUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/profile/oh-my-posh/$ohMyPoshTheme.json"
+    Invoke-RestMethod  $profileUrl -OutFile "$ohmyposhConfigPath"
 
     Write-Host "Provisioning completed"
-    [Environment]::SetEnvironmentVariable("provisioned", $true, 'Machine')
+    [Environment]::SetEnvironmentVariable("provisioned", $profileName, 'Machine')
 }
 
 #---
@@ -91,13 +96,4 @@ $workspaces = @{
         name = "qa";
         context = "<context-name>"
     };
-}
-
-function Path-Reload {
-    $env:Path = [System.Environment]::GetEnvironmentVariable("Path", "Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path", "User") 
-}
-
-
-function K8s-EnableObservability {
-    kubectl port-forward service/otel-collector 4317 -n observability
 }
