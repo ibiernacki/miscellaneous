@@ -2,6 +2,5 @@
 To provision via powershell run:
 ``` 
 > Set-ExecutionPolicy Unrestricted -Scope CurrentUser # Optional: Needed to run a remote script the first time
-> $provisionScript = irm https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/profile/pwsh/provision.ps1
-> & $provisionScript
+> $PROFILE >> (irm https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/profile/pwsh/provision.ps1)
 ```
