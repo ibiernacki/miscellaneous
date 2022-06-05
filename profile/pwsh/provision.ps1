@@ -3,8 +3,6 @@ if (!$IsWindows) {
     exit;
 }
 
-
-
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 $isAdmin = $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
     
@@ -23,7 +21,7 @@ $profilePwshPath = "profile/pwsh/profile.ps1"
 $repoUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main"
 $defaultProfilePwshUrl = "$repoUrl/profile/pwsh/Microsoft.PowerShell_profile.ps1"
 $profileUrl = "$repoUrl/$profilePwshPath"
-$defaultProfile
+
 $profilePath = "$HOME/.profile"
 $profilePwshPath = "$profilePath/$profilePwshPath"
 
