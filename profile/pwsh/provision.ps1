@@ -31,3 +31,5 @@ $defaultProfileContent = Invoke-RestMethod $defaultProfilePwshUrl
 
 $PROFILE >> $defaultProfileContent
 & $profilePwshPath
+
+Write-Host -ForegroundColor Green "Done. Restart terminal window to apply changes."
