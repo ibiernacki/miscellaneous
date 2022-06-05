@@ -1,10 +1,12 @@
 $profileName = "ibiernacki"
 $profileGithubUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/"
 
+
+$profilePath = "$HOME/.profile"
 $workspace = "shared" #available options: "dev", "shared", "qa"
 $code = "$HOME/code"
 $ohMyPoshTheme = "default"
-$ohmyposhConfigPath = "$HOME/.profile/profile/oh-my-posh/$ohMyPoshTheme.json"
+$ohmyposhConfigPath = "$profilePath/profile/oh-my-posh/$ohMyPoshTheme.json"
 
 
 #set up global variables (available in whole system)
@@ -39,11 +41,11 @@ if (!([Environment]::GetEnvironmentVariable("provisioned", 'Machine') -eq "$prof
     $globalEnvVariables.Keys | ForEach-Object {
         $key = $_ 
         $globalEnvVariables.Values | Select-Object -First 1 -Skip $index | ForEach-Object {
-                [Environment]::SetEnvironmentVariable($key, $_ , 'Machine')
-            }
+            [Environment]::SetEnvironmentVariable($key, $_ , 'Machine')
         }
         $index ++
-    }
+        }
+    
     New-Item -ItemType Directory -Force -Path "$HOME/.profile/profile/oh-my-posh"
     $profileUrl = "https://raw.githubusercontent.com/ibiernacki/miscellaneous/main/profile/oh-my-posh/$ohMyPoshTheme.json"
     Invoke-RestMethod  $profileUrl -OutFile "$ohmyposhConfigPath"
@@ -61,8 +63,7 @@ Set-PSReadLineOption -PredictionViewStyle ListView
 Set-PSReadLineOption -EditMode Windows
 Set-PSReadLineKeyHandler -Chord Shift+Spacebar -Function MenuComplete
 
-$ohMyPoshTheme = "$profile/$ohMyPoshTheme.json" #
-oh-my-posh --init --shell pwsh --config $ohMyPoshTheme | Invoke-Expression
+oh-my-posh --init --shell pwsh --config $ohmyposhConfigPath | Invoke-Expression
 
 
 #initialize tools completion
