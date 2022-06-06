@@ -11,7 +11,7 @@ if (!$isAdmin) {
     exit;
 }
 
-if( (Start-Process where.exe -ArgumentList "/Q", "choco" -PassThru -Wait -WindowStyle Hidden).ExitCode -eq 1) {
+if(! (where.exe choco)) {
     Write-Warning "choco not installed. Go to chocolatey website and install: https://chocolatey.org/"
     exit;
 }
